@@ -1,0 +1,24 @@
+[project]
+name = "async-payments"
+version = "0.1.0"
+description = "Async payment processing microservice"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+    "pydantic>=2.0",
+    "pydantic-settings>=2.0",
+    "sqlalchemy[asyncio]>=2.0",
+    "asyncpg>=0.30.0",
+    "alembic>=1.14.0",
+    "faststream[rabbit,cli]>=0.5.0",
+    "httpx>=0.28.0",
+]
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
