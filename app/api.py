@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from fastapi import APIRouter, Depends, Header, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -58,8 +60,6 @@ async def get_payment(
     payment_id: str,
     session: AsyncSession = Depends(get_session),
 ) -> PaymentResponse:
-    from uuid import UUID
-
     try:
         payment_uuid = UUID(payment_id)
     except ValueError as exc:

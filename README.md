@@ -79,6 +79,15 @@ Client → API → PostgreSQL (payments + outbox)
 
 Платёж и событие в таблице `outbox` сохраняются в одной транзакции. Фоновый publisher в API читает неопубликованные события и отправляет их в RabbitMQ.
 
+Код разнесён по слоям:
+
+- `app/models/` — SQLAlchemy-модели и enum'ы
+- `app/schemas/` — Pydantic-схемы API
+- `app/services/payment_service.py` — создание платежей и идемпотентность
+- `app/services/outbox_service.py` — публикация outbox-событий
+- `app/services/payment_processor.py` — бизнес-логика consumer'а
+- `app/services/webhook_service.py` — webhook и retry
+
 ### Retry и DLQ
 
 - **Consumer**: до 3 попыток обработки с экспоненциальной задержкой; после финальной ошибки сообщение уходит в DLQ `payments.new.dlq`.
@@ -89,7 +98,7 @@ Client → API → PostgreSQL (payments + outbox)
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-pip install -e .
+pip install -e ".[dev]"
 
 # PostgreSQL и RabbitMQ (через Docker)
 docker compose up postgres rabbitmq -d
@@ -102,6 +111,19 @@ alembic upgrade head
 uvicorn app.main:app --reload
 faststream run app.consumer:app
 ```
+
+## Тесты
+
+```bash
+pytest
+```
+
+Покрыты ключевые сценарии:
+
+- идемпотентное создание платежа
+- запись outbox-события при создании платежа
+- retry webhook'ов с экспоненциальной задержкой
+- retry consumer'а и переход к DLQ после исчерпания попыток
 
 ## Переменные окружения
 

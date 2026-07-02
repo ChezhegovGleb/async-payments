@@ -13,6 +13,8 @@ class Settings(BaseSettings):
 
     webhook_max_retries: int = 3
     webhook_retry_base_delay_seconds: float = 1.0
+    consumer_max_retries: int = 3
+    consumer_retry_base_delay_seconds: float = 1.0
 
     payment_queue: str = "payments.new"
     payment_dlq: str = "payments.new.dlq"
